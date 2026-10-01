@@ -29,6 +29,8 @@ const icons = {
   chart: '<path d="M3 20h18"/><path d="M6 20v-6"/><path d="M12 20V4"/><path d="M18 20V10"/>',
   file: '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>',
   check: '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+  moon: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>',
   advising: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M16 3h6v5h-3l-2 2V8h-1z"/>'
 };
 
@@ -113,6 +115,7 @@ const toast = document.querySelector("#toast");
 function defaultState() {
   return {
     session: false,
+    theme: "light",
     balance: HOLD_AMOUNT,
     enrolled: ["BIO110-01", "ENG102-01", "MAT201-01"],
     pending: "",
@@ -138,6 +141,7 @@ function loadState() {
       if (Array.isArray(fallback[key]) ? Array.isArray(value) : typeof value === typeof fallback[key]) loaded[key] = value;
     });
     loaded.enrolled = [...new Set(loaded.enrolled.filter((id) => findSection(id)))];
+    if (loaded.theme !== "dark") loaded.theme = "light";
     if (!findSection(loaded.pending)) loaded.pending = "";
     if (!(loaded.balance >= 0)) loaded.balance = fallback.balance;
     return loaded;
@@ -215,6 +219,14 @@ function findConflict(section) {
 
 function hasHold() {
   return state.balance > 0;
+}
+
+function applyTheme() {
+  const dark = state.theme === "dark";
+  document.body.classList.toggle("theme-dark", dark);
+  const toggle = document.querySelector("#themeToggle");
+  toggle.innerHTML = `${icon(dark ? "sun" : "moon")}[${dark ? "Light" : "Dark"}]`;
+  toggle.setAttribute("aria-label", dark ? "Switch to light theme" : "Switch to dark theme");
 }
 
 /* Sign-in */
@@ -730,6 +742,7 @@ function render({ focus = false } = {}) {
   const isHome = route.key === "home";
   document.querySelector("#backButton").hidden = isHome;
   document.querySelector("#homeLink").hidden = isHome;
+  document.querySelector("#themeToggle").hidden = !isHome;
   document.title = `${main.querySelector("h1").textContent.trim()} · University Student Portal`;
   if (focus) {
     main.focus();
@@ -766,6 +779,12 @@ function attemptRegister(id) {
 const actions = {
   back: () => history.back(),
   logout,
+  theme: () => {
+    state.theme = state.theme === "dark" ? "light" : "dark";
+    saveState();
+    applyTheme();
+    showToast(`${state.theme === "dark" ? "Dark" : "Light"} theme enabled.`);
+  },
   register: ({ id }) => attemptRegister(id),
   drop: ({ id }) => {
     const found = findSection(id);
@@ -796,7 +815,7 @@ const actions = {
   },
   reset: () => {
     if (!window.confirm("Reset all demo data? This restores the financial hold and the original schedule.")) return;
-    Object.assign(state, defaultState(), { session: true });
+    Object.assign(state, defaultState(), { session: true, theme: state.theme });
     courseQuery = "";
     saveState();
     go("home");
@@ -845,4 +864,5 @@ document.querySelectorAll("[data-icon]").forEach((element) => {
   element.innerHTML = icon(element.dataset.icon);
 });
 
+applyTheme();
 if (state.session) showApp();
