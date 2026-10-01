@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="University Student Portal prototype">
+  <title>University Student Portal</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#mainContent">Skip to main content</a>
+
+  <main id="authView" class="auth-shell">
+    <section class="auth-card" aria-labelledby="loginTitle">
+      <h1 class="auth-brand" id="loginTitle">
+        <span data-icon="cap"></span>
+        <span>University Student Portal</span>
+      </h1>
+
+      <form id="loginForm" class="stack" novalidate>
+        <div class="field">
+          <label for="username">User Name</label>
+          <div class="input-wrap">
+            <span data-icon="user"></span>
+            <input id="username" name="username" type="text" autocomplete="username" placeholder="name@university.edu" required>
+          </div>
+          <p class="field__error" id="usernameError"></p>
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <div class="input-wrap">
+            <span data-icon="lock"></span>
+            <input id="password" name="password" type="password" autocomplete="current-password" minlength="6" placeholder="At least 6 characters" required>
+          </div>
+          <p class="field__error" id="passwordError"></p>
+        </div>
+        <button class="link-button link-button--end" id="forgotPassword" type="button">Forgot Password?</button>
+        <button class="button button--signin" type="submit">Sign In</button>
+        <p class="form-status" id="loginStatus" role="status" aria-live="polite"></p>
+      </form>
+
+      <p class="demo-notice">Front-end demo: any user name and a password of at least six characters signs in as the sample student. Use made-up credentials. Passwords are never saved.</p>
+    </section>
+  </main>
+
+  <div id="appView" class="app-shell" hidden>
+    <header class="portal-header">
+      <div class="portal-header__brand">
+        <a class="brand" href="#/home">
+          <span data-icon="cap"></span>
+          <span>University Student Portal</span>
+        </a>
+        <span class="portal-header__welcome">Welcome <span id="studentName"></span></span>
+      </div>
+      <nav class="portal-header__nav" aria-label="Portal">
+        <button class="nav-link" id="backButton" type="button" data-action="back"><span data-icon="back"></span>[Back]</button>
+        <a class="nav-link" id="homeLink" href="#/home"><span data-icon="home"></span>[Home]</a>
+        <button class="nav-link" type="button" data-action="logout"><span data-icon="logout"></span>[Log Out]</button>
+      </nav>
+    </header>
+
+    <nav class="breadcrumb" id="breadcrumb" aria-label="Breadcrumb"></nav>
+    <p class="storage-warning" id="storageStatus" role="status" hidden>Device storage is unavailable or full. You can keep using the demo, but changes may be lost when you close or reload it.</p>
+
+    <main id="mainContent" class="main-content" tabindex="-1"></main>
+
+    <footer class="portal-footer">
+      <span>Prototype with fictional data. Changes stay in this browser.</span>
+      <button class="link-button" type="button" data-action="reset">Reset demo data</button>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
